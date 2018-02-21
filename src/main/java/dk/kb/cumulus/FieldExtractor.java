@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +35,14 @@ public class FieldExtractor {
 
     /** The cumulus server.*/
     protected final CumulusServer server;
-    
+
     /** The catalog for this extraction.*/
     protected final String catalog;
-    
+
     /** The mapping between the field names and their GUIDs.
      * It is used for optimization, so we don't have to locate a field GUID every time we use the field.*/
     protected final Map<String, GUID> fieldGuids;
-    
+
     /**
      * Constructor.
      * @param layout The field-layout for the extractor.
@@ -65,7 +66,7 @@ public class FieldExtractor {
     public Map<String, Field> getFields(Item item) {
         return getFields(item, true);
     }
-    
+
     /**
      * Extracts all the fields of the item according to the layout, and returns them as a mapping between
      * the name of the field and the field.
@@ -76,21 +77,21 @@ public class FieldExtractor {
     public Map<String, Field> getAllFields(Item item) {
         return getFields(item, false);
     }
-    
+
     /**
      * @return The cumulus server.
      */
     public CumulusServer getServer() {
         return server;
     }
-    
+
     /**
      * @return The catalog.
      */
     public String getCatalog() {
         return catalog;
     }
-    
+
     /**
      * Extracts the fields for the item.
      * @param item The item to extract the fields from.
@@ -124,7 +125,7 @@ public class FieldExtractor {
         }
         return res;
     }
-    
+
     /**
      * Extracts the value of a specific field from the given item.
      * @param fd The definition of the field.
@@ -168,13 +169,13 @@ public class FieldExtractor {
                     item.getStringValue(fd.getFieldUID()));
         case FieldTypes.FieldTypeBinary:
             log.trace("Issue handling the field '" + fd.getName() + "' of type " + getFieldTypeName(fd.getFieldType()) 
-                + ", tries to extracts it as the path of the Asset Reference");
+            + ", tries to extracts it as the path of the Asset Reference");
             return extractBinaryField(fd, item);
         case FieldTypes.FieldTypeTable:
             return new TableField(fd, getFieldTypeName(fd.getFieldType()), item.getTableValue(fd.getFieldUID()), this);
         default:
             log.trace("Currently does not handle field value for type " + getFieldTypeName(fd.getFieldType())
-                    + ", returning an empty field for " + fd.getName());
+            + ", returning an empty field for " + fd.getName());
             return new EmptyField(fd, getFieldTypeName(fd.getFieldType()));
         }
     }
@@ -214,7 +215,7 @@ public class FieldExtractor {
         log.warn("Cannot understand the field type '" + fieldType + "'. It does not seem to be defined!");
         return "NOT DEFINED!!!";
     }
-    
+
     /**
      * Extracts the GUID for the field with the given name.
      * NOTE: If there is multiple fields with the name (ignore case), only the first found is returned.
@@ -233,10 +234,10 @@ public class FieldExtractor {
                 return guid;
             }
         }
-        
+
         throw new IllegalStateException("Could not find field: " + fieldName); 
     }
-    
+
     /**
      * Retrieves the string value of a field.
      * Though it does not handle fields of type Table.
@@ -257,7 +258,7 @@ public class FieldExtractor {
         }
         return null;
     }
-    
+
     /**
      * Extracts the field for a binary field.
      * @param fd The definition of the field.
@@ -268,23 +269,30 @@ public class FieldExtractor {
         log.debug("Extracting the binary value for field: " + fd.getName());
         if(fd.getName().equals("Related Sub Assets") || fd.getName().equals("Related Master Assets")) {
             AssetXRefFieldValue subAssets = item.getAssetXRefValue(fd.getFieldUID());
-            
+
             List<String> names = new ArrayList<String>();
             for(GUID g : subAssets.getRelations()) {
                 names.addAll(subAssets.getReferencedItemNames(subAssets.getReferences(g)).values());
             }
             Collections.sort(names);
-            
+
             AssetsField res = new AssetsField(fd, getFieldTypeName(fd.getFieldType()));
             for(String name : names) {
                 CumulusRecord cr = server.findCumulusRecordByName(catalog, name);
-                cr.initIntellectualEntityUUID();
+                // initialize the RelatedObjectIdentifierValue for the intellectual entity
+                // This is needed for the preservation. Perhaps move?
+                if(cr.getFieldValueOrNull(
+                        Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY) == null) {
+                    cr.setStringValueInField(Constants.FieldNames.REPRESENTATION_INTELLECTUAL_ENTITY_UUID, 
+                            UUID.randomUUID().toString());
+                }
                 res.addAsset(name, cr.getFieldValue(
                         Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY));
             }
-            
+
             return res;
         } else {
+            // Extract the AssetReference display string (usually the path)
             return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
                     item.getAssetReferenceValue(fd.getFieldUID()).getPart(0).getDisplayString());
         }

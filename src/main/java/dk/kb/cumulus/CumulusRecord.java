@@ -1,14 +1,13 @@
 package dk.kb.cumulus;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,8 +35,9 @@ import dk.kb.cumulus.field.Field;
 import dk.kb.cumulus.field.StringField;
 import dk.kb.cumulus.field.TableField;
 import dk.kb.cumulus.field.TableField.Row;
-import dk.kb.cumulus.utils.StringUtils;
+import dk.kb.cumulus.utils.ArgumentCheck;
 import dk.kb.cumulus.utils.GuidExtractionUtils;
+import dk.kb.cumulus.utils.StringUtils;
 
 /**
  * Record from Cumulus.
@@ -62,13 +62,11 @@ public class CumulusRecord {
     /** The Cumulus record item.*/
     protected final Item item;
 
-    /** The GUID for the metadata record. It is created and stored the first time it is needed. */
-    protected String metadataGuid;
     /** The GUID for the file and the Cumulus record. It is created and stored the first time it is needed.*/
     protected String guid = null;
     
-    /** The ID of the collection where the record should be preserved.*/
-    protected String preservationCollectionID;
+    /** A map between the value and the name of the fields already extracted.*/
+    protected Map<String, String> fieldValues = new HashMap<String, String>();
     
     /**
      * Constructor.
@@ -80,38 +78,6 @@ public class CumulusRecord {
         this.item = item;
     }
     
-    /**
-     * Initializes the fields required for the preservation. 
-     */
-    public void initFieldsForPreservation() {
-//        initChecksumField();
-        initIntellectualEntityUUID();
-    }
-    
-    /**
-     * Initializes the fields required for the preservation of the representation.
-     */
-    public void initRepresentationFields() {
-        initRepresentationIntellectualEntityUUID();
-    }
-    
-    /**
-     * Sets a new Metadata GUID for the record.
-     */
-    public void resetMetadataGuid() {
-        metadataGuid = UUID.randomUUID().toString();
-        setStringValueInField(Constants.FieldNames.METADATA_GUID, metadataGuid);
-    }
-    
-    /**
-     * Sets a new metadata GUID for the representation of this record.
-     */
-    public void resetRepresentationMetadataGuid() {
-        String representationMetadataGuid = UUID.randomUUID().toString();
-        setStringValueInField(Constants.FieldNames.REPRESENTATION_METADATA_GUID, 
-                representationMetadataGuid);
-    }
-
     /**
      * @return The identifier for this record.
      */
@@ -132,13 +98,16 @@ public class CumulusRecord {
      * Extracts the value of the field with the given name.
      * If multiple fields have the given field name, then only the value of one of the fields are returned.
      * The result is in String format.
-     * It will throw an exception, if the field does not contain a value.
+     * It will throw an exception, if the field does not exist or does not contain a value.
      * @param fieldname The name for the field. 
      * @return The string value of the field. 
      */
     public String getFieldValue(String fieldname) {
-        GUID fieldGuid = fe.getFieldGUID(fieldname);
-        return item.getStringValue(fieldGuid);
+        if(!fieldValues.containsKey(fieldname)) {
+            GUID fieldGuid = fe.getFieldGUID(fieldname);
+            fieldValues.put(fieldname, item.getStringValue(fieldGuid));    
+        }
+        return fieldValues.get(fieldname);
     }
     
     /**
@@ -148,12 +117,27 @@ public class CumulusRecord {
      * @return The value of the field, or null if field is empty.
      */
     public String getFieldValueOrNull(String fieldname) {
-        GUID fieldGuid = fe.getFieldGUID(fieldname);
-        if(item.hasValue(fieldGuid)) {
-            return item.getStringValue(fieldGuid);
-        } else {
-            return null;
+        if(!fieldValues.containsKey(fieldname)) {
+            GUID fieldGuid = fe.getFieldGUID(fieldname);
+            if(item.hasValue(fieldGuid)) {
+                fieldValues.put(fieldname, item.getStringValue(fieldGuid));    
+            } else {
+                return null;
+            }
         }
+        return fieldValues.get(fieldname);
+    }
+    
+    /**
+     * Set the string value of a given Cumulus field.
+     * @param fieldName The name of the field.
+     * @param value The new value of the field.
+     */
+    public void setStringValueInField(String fieldName, String value) {
+        GUID fieldGuid = fe.getFieldGUID(fieldName);
+        setStringValueInField(fieldGuid, value);
+        
+        fieldValues.put(fieldName, value);
     }
     
     /**
@@ -176,20 +160,6 @@ public class CumulusRecord {
      */
     public String getFieldValueForNonStringField(String fieldname) {
         return fe.getStringValueForField(fieldname, item);
-    }
-
-    /**
-     * Retrieves the metadata as an input stream.
-     * @param cumulusFieldMetadataFile The file which the metadata is written to.
-     * @return The input stream with the metadata.
-     */
-    public InputStream getMetadata(File cumulusFieldMetadataFile) {
-        try {
-            writeMetadataFile(cumulusFieldMetadataFile);
-            return new FileInputStream(cumulusFieldMetadataFile);
-        } catch (Exception e) {
-            throw new IllegalStateException("Could not extract metadata file.", e);
-        }
     }
 
     /**
@@ -233,11 +203,12 @@ public class CumulusRecord {
     
     /**
      * Extracts all the metadata fields for this record and converts them into an XML file. 
-     * @param cumulusFieldFile The file where the XML for this record is placed.
+     * @param out The output stream where the XML for this record is placed.
      * @throws ParserConfigurationException If the XML parse has an issue with the configuration.
      * @throws TransformerException If the transformer has an issue.
      */
-    protected void writeMetadataFile(File cumulusFieldFile) throws ParserConfigurationException, TransformerException {
+    public void writeFieldMetadata(OutputStream out) throws ParserConfigurationException, TransformerException {
+        ArgumentCheck.checkNotNull(out, "OutputStream out");
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
@@ -259,7 +230,7 @@ public class CumulusRecord {
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
         DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(cumulusFieldFile);
+        StreamResult result = new StreamResult(out);
 
         transformer.transform(source, result);
     }
@@ -386,83 +357,25 @@ public class CumulusRecord {
                     + " field(s) did not live up to their requirements.\n" + errMsg);
         }
     }
-    
-    /**
-     * Initializes the value in the related object identifier value for the intellectual entity.
-     */
-    protected void initIntellectualEntityUUID() {
-        GUID relatedIntellectualEntityGuid = fe.getFieldGUID(
-                Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY);
-        if(item.hasValue(relatedIntellectualEntityGuid)) {
-            log.trace("Already has a value for the related intellectual object");
-        } else {
-            setStringValueInField(relatedIntellectualEntityGuid, UUID.randomUUID().toString());
-        }
-    }
-    
-    /**
-     * Initializes the value for the intellectual entity of the representation.
-     */
-    protected void initRepresentationIntellectualEntityUUID() {
-        GUID relatedIntellectualEntityGuid = fe.getFieldGUID(
-                Constants.FieldNames.REPRESENTATION_INTELLECTUAL_ENTITY_UUID);
-        if(item.hasValue(relatedIntellectualEntityGuid)) {
-            log.trace("Already has a value for the related intellectual object of the representation");
-        } else {
-            setStringValueInField(relatedIntellectualEntityGuid, UUID.randomUUID().toString());
-        }
-    }
-    
-    /**
-     * Sets the preservation status to failure.
-     * @param status The error message for the failure state.
-     */
-    public void setPreservationFailed(String status) {
-        try {
-            GUID preservationStatusGuid = fe.getFieldGUID(Constants.FieldNames.PRESERVATION_STATUS);
-            StringEnumFieldValue enumValue = item.getStringEnumValue(preservationStatusGuid);
-            enumValue.setFromDisplayString(Constants.FieldValues.PRESERVATIONSTATE_ARCHIVAL_FAILED);
-            item.setStringEnumValue(preservationStatusGuid, enumValue);
-            
-            GUID qaErrorGuid = fe.getFieldGUID(Constants.FieldNames.QA_ERROR);
-            item.setStringValue(qaErrorGuid, status);
-            item.save();
-        } catch (Exception e) {
-            String errMsg = "Could not set preservation failure state for status '" + status + "'";
-            log.error(errMsg, e);
-            throw new IllegalStateException(errMsg, e);
-        }
-    }
 
     /**
-     * Sets the preservation status to successfully finished.
-     * Also removes any existing error messages.
+     * Sets a given String Enum value for a field.
+     * @param fieldName The name of the field.
+     * @param value The new enum value for the field.
      */
-    public void setPreservationFinished() {
+    public void setStringEnumValueForField(String fieldName, String value) {
         try {
-            GUID preservationStatusGuid = fe.getFieldGUID(Constants.FieldNames.PRESERVATION_STATUS);
-            StringEnumFieldValue enumValue = item.getStringEnumValue(preservationStatusGuid);
-            enumValue.setFromDisplayString(Constants.FieldValues.PRESERVATIONSTATE_ARCHIVAL_COMPLETED);
-            item.setStringEnumValue(preservationStatusGuid, enumValue);
+            GUID fieldGuid = fe.getFieldGUID(fieldName);
+            StringEnumFieldValue enumValue = item.getStringEnumValue(fieldGuid);
+            enumValue.setFromDisplayString(value);
+            item.setStringEnumValue(fieldGuid, enumValue);
 
-            GUID qaErrorGuid = fe.getFieldGUID(Constants.FieldNames.QA_ERROR);
-            item.setStringValue(qaErrorGuid, "");
             item.save();
         } catch(Exception e) {
             String errMsg = "Could not set preservation complete";
             log.error(errMsg, e);
             throw new IllegalStateException(errMsg, e);
         }
-    }
-    
-    /**
-     * Set the string value of a given Cumulus field.
-     * @param fieldName The name of the field.
-     * @param value The new value of the field.
-     */
-    public void setStringValueInField(String fieldName, String value) {
-        GUID fieldGuid = fe.getFieldGUID(fieldName);
-        setStringValueInField(fieldGuid, value);
     }
     
     /**
@@ -499,48 +412,20 @@ public class CumulusRecord {
     }
 
     /**
-     * Retrieves the value for the metadata guid.
-     * The first time this method is called, then the guid is created and written back to Cumulus.
-     * All following calls of the method returns the guid created in the initial call.
-     * @return The metadata guid for this cumulus record.
-     */
-    public String getMetadataGUID() {
-        if(metadataGuid == null) {
-            metadataGuid = getFieldValueOrNull(Constants.FieldNames.METADATA_GUID);
-            if(metadataGuid == null) {
-                try {
-                    metadataGuid = UUID.randomUUID().toString();
-                    GUID metadataIdGuid = fe.getFieldGUID(Constants.FieldNames.METADATA_GUID);
-                    item.setStringValue(metadataIdGuid, metadataGuid);
-                    item.save();
-                } catch (Exception e) {
-                    String errMsg = "Could not set the package id for the metadata.";
-                    log.error(errMsg, e);
-                    throw new IllegalStateException(errMsg, e);
-                }
-            }
-        }
-
-        return metadataGuid;
-    }
-    
-    /**
-     * Retrieves the preservation collection ID.
-     * @return The preservation collection ID.
-     */
-    public String getPreservationCollectionID() {
-        if(preservationCollectionID == null) {
-            preservationCollectionID = getFieldValue(Constants.FieldNames.COLLECTION_ID);
-        }
-        return preservationCollectionID;
-    }
-
-    /**
      * Checks whether the record has any sub-assets, and thus whether it is a master-asset.
-     * @return Whether or not this is record is a master-asset.
+     * @return Whether or not this record is a master-asset.
      */
     public boolean isMasterAsset() {
         GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_SUB_ASSETS);
+        return item.hasValue(fieldGuid);
+    }
+    
+    /**
+     * Checks whether the record has any master-assets attached, and thus whether it is a sub-asset.
+     * @return Whether or not this record is a sub-asset.
+     */
+    public boolean isSubAsset() {
+        GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_MASTER_ASSETS);
         return item.hasValue(fieldGuid);
     }
     
