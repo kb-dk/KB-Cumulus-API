@@ -33,34 +33,10 @@ public class CumulusQueryTest extends ExtendedTestCase {
     }
     
     @Test
-    public void testGetPreservationAllQuery() {
-        String catalogName = UUID.randomUUID().toString();
-        CumulusQuery cq = CumulusQuery.getPreservationAllQuery(catalogName);
-        
-        Assert.assertTrue(cq.getQuery().contains(catalogName));
-    }
-    
-    @Test
-    public void testGetPreservationSubAssetQuery() {
-        String catalogName = UUID.randomUUID().toString();        
-        CumulusQuery cq = CumulusQuery.getPreservationSubAssetQuery(catalogName);
-        
-        Assert.assertTrue(cq.getQuery().contains(catalogName));        
-    }
-    
-    @Test
-    public void testGetPreservationMasterAssetQuery() {
-        String catalogName = UUID.randomUUID().toString();        
-        CumulusQuery cq = CumulusQuery.getPreservationMasterAssetQuery(catalogName);
-        
-        Assert.assertTrue(cq.getQuery().contains(catalogName));        
-    }
-    
-    @Test
     public void testGetQueryForSpecificUUID() {
         String catalogName = UUID.randomUUID().toString();  
         String uuid = UUID.randomUUID().toString();
-        CumulusQuery cq = CumulusQuery.getQueryForSpecificUUID(catalogName, uuid);
+        CumulusQuery cq = CumulusQuery.getQueryForSpecificGUID(catalogName, uuid);
         
         Assert.assertTrue(cq.getQuery().contains(catalogName));        
         Assert.assertTrue(cq.getQuery().contains(uuid));        
@@ -82,23 +58,5 @@ public class CumulusQueryTest extends ExtendedTestCase {
         CumulusQuery cq = CumulusQuery.getQueryForAllInCatalog(catalogName);
         
         Assert.assertTrue(cq.getQuery().contains(catalogName));        
-    }
-    
-    @Test
-    public void testGetQueryForPreservationValidation() {
-        String catalogName = UUID.randomUUID().toString();  
-        String preservaionValidationValue = UUID.randomUUID().toString();
-        CumulusQuery cq = CumulusQuery.getQueryForPreservationValidation(catalogName, preservaionValidationValue);
-        
-        Assert.assertTrue(cq.getQuery().contains(catalogName));
-        Assert.assertTrue(cq.getQuery().contains(preservaionValidationValue));
-    }
-
-    @Test
-    public void testGetQueryForPreservationImportation() {
-        String catalogName = UUID.randomUUID().toString();  
-        CumulusQuery cq = CumulusQuery.getQueryForPreservationImportation(catalogName);
-        
-        Assert.assertTrue(cq.getQuery().contains(catalogName));
     }
 }

@@ -138,7 +138,7 @@ public class CumulusServer implements Closeable {
     public CumulusRecord findCumulusRecord(String catalogName, String uuid) {
         ArgumentCheck.checkNotNullOrEmpty(catalogName, "String catalogName");
         ArgumentCheck.checkNotNullOrEmpty(uuid, "String uuid");
-        CumulusQuery query = CumulusQuery.getQueryForSpecificUUID(catalogName, uuid);
+        CumulusQuery query = CumulusQuery.getQueryForSpecificGUID(catalogName, uuid);
         
         return getSpecificRecord(query, catalogName);
     }
