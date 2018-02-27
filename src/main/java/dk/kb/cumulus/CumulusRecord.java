@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 
 import com.canto.cumulus.Asset;
 import com.canto.cumulus.GUID;
-import com.canto.cumulus.Item;
+import com.canto.cumulus.RecordItem;
 import com.canto.cumulus.fieldvalue.AssetReference;
 import com.canto.cumulus.fieldvalue.StringEnumFieldValue;
 
@@ -60,7 +60,7 @@ public class CumulusRecord {
     /** The field extractor.*/
     protected final FieldExtractor fe;
     /** The Cumulus record item.*/
-    protected final Item item;
+    protected final RecordItem item;
 
     /** The GUID for the file and the Cumulus record. It is created and stored the first time it is needed.*/
     protected String guid = null;
@@ -73,7 +73,7 @@ public class CumulusRecord {
      * @param fe The field extractor.
      * @param item The Cumulus record item.
      */
-    public CumulusRecord(FieldExtractor fe, Item item) {
+    public CumulusRecord(FieldExtractor fe, RecordItem item) {
         this.fe = fe;
         this.item = item;
     }
@@ -151,6 +151,27 @@ public class CumulusRecord {
     public Long getFieldLongValue(String fieldname) {
         GUID fieldGuid = fe.getFieldGUID(fieldname);
         return item.getLongValue(fieldGuid);
+    }
+    
+    /**
+     * Extracts the long value of the field with the given name.
+     * If multiple fields have the given field name, then only the value of one of the fields are returned.
+     * The result has type Long.
+     * It will throw an exception, if the field does not have an value.
+     * @param fieldname The name for the field. 
+     * @return The long value of the field. 
+     */
+    public Integer getFieldIntValue(String fieldname) {
+        GUID fieldGuid = fe.getFieldGUID(fieldname);
+        return item.getIntValue(fieldGuid);
+    }
+    
+    /**
+     * Retrieves the IDs of the categories for this record.
+     * @return The collection of IDs for the categories for this record.
+     */
+    public Collection<Integer> getCategories() {
+        return item.getCategoriesValue().getIDs();
     }
     
     /**

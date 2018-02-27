@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.canto.cumulus.Catalog;
+import com.canto.cumulus.CategoryItem;
 import com.canto.cumulus.Cumulus;
 import com.canto.cumulus.RecordItemCollection;
 import com.canto.cumulus.Server;
@@ -82,6 +83,17 @@ public class CumulusServer implements Closeable {
     public List<String> getCatalogNames() {
         return configuration.getCatalogs();
     }
+    
+    /**
+     * Retrieves the category with the given name from the given catalog.
+     * @param catalogName The name of the catalog.
+     * @param categoryId The ID of the category.
+     * @return The category.
+     */
+    public CategoryItem getCategory(String catalogName, int categoryId) {
+        Catalog catalog = getCatalog(catalogName);
+        return catalog.getAllCategoriesItemCollection().getCategoryItemByID(categoryId);
+    }
 
     /**
      * @return The Cumulus server.
@@ -105,6 +117,9 @@ public class CumulusServer implements Closeable {
      * @return The catalog.
      */
     protected Catalog getCatalog(String catalogName) {
+        if(!server.isAlive()) {
+            catalogs.clear();
+        }
         if(!catalogs.containsKey(catalogName)) {
             int catalogId = getServer().findCatalogID(catalogName);
             catalogs.put(catalogName, getServer().openCatalog(catalogId));            

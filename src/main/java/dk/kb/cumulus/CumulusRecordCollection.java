@@ -3,6 +3,7 @@ package dk.kb.cumulus;
 import java.util.Iterator;
 
 import com.canto.cumulus.Item;
+import com.canto.cumulus.RecordItem;
 import com.canto.cumulus.RecordItemCollection;
 
 /**
@@ -37,7 +38,7 @@ public class CumulusRecordCollection implements Iterable<CumulusRecord> {
 
             @Override
             public CumulusRecord next() {
-                return new CumulusRecord(extractor, items.next());
+                return new CumulusRecord(extractor, (RecordItem) items.next());
             }
         };
         return res;
