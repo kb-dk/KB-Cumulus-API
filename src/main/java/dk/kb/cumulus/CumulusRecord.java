@@ -28,6 +28,7 @@ import com.canto.cumulus.Asset;
 import com.canto.cumulus.GUID;
 import com.canto.cumulus.RecordItem;
 import com.canto.cumulus.fieldvalue.AssetReference;
+import com.canto.cumulus.fieldvalue.AssetXRefFieldValue;
 import com.canto.cumulus.fieldvalue.StringEnumFieldValue;
 
 import dk.kb.cumulus.field.AssetsField;
@@ -448,6 +449,34 @@ public class CumulusRecord {
     public boolean isSubAsset() {
         GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_MASTER_ASSETS);
         return item.hasValue(fieldGuid);
+    }
+    
+    /**
+     * Adds the given Cumulus record as Master Asset to this Cumulus record.
+     * @param record The record to add as Master Asset.
+     */
+    public void addMasterAsset(CumulusRecord record) {
+        GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_MASTER_ASSETS);
+        AssetXRefFieldValue assetXRef = item.getAssetXRefValue(fieldGuid);
+        assetXRef.addReference(GUID.UID_ASSET_RELATION_IS_ALTERNATE, 
+                record.getFieldIntValue(Constants.FieldNames.ID), 
+                record.getFieldValue(Constants.FieldNames.RECORD_NAME));
+        item.setAssetXRefValue(fieldGuid, assetXRef);
+        item.save();
+    }
+    
+    /**
+     * Adds the given Cumulus record as Sub Asset to this Cumulus record.
+     * @param record The record to add as Sub Asset.
+     */
+    public void addSubAsset(CumulusRecord record) {
+        GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_SUB_ASSETS);
+        AssetXRefFieldValue assetXRef = item.getAssetXRefValue(fieldGuid);
+//        assetXRef.
+        assetXRef.addReference(GUID.UID_ASSET_RELATION_IS_ALTERNATE, 
+                record.item.getID(), record.item.getDisplayString());
+        item.setAssetXRefValue(fieldGuid, assetXRef);
+        item.save();
     }
     
     @Override

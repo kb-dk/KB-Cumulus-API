@@ -103,6 +103,9 @@ public interface Constants {
         
         /** The name of the field for the Item Modification Date*/
         String ITEM_MODIFICATION_DATE = "Item Modification Date";
+        
+        /** The name of the field for ID (the internal Cumulus identifier).*/
+        String ID = "ID";
     }
     
     /**

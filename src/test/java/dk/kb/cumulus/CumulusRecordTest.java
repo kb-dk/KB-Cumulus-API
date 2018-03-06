@@ -1,60 +1,75 @@
-//package dk.kb.cumulus;
-//
-//import static org.mockito.Matchers.anyString;
-//import static org.mockito.Matchers.eq;
-//import static org.mockito.Mockito.mock;
-//import static org.mockito.Mockito.times;
-//import static org.mockito.Mockito.verify;
-//import static org.mockito.Mockito.verifyNoMoreInteractions;
-//import static org.mockito.Mockito.verifyZeroInteractions;
-//import static org.mockito.Mockito.when;
-//import static org.testng.Assert.assertEquals;
-//import static org.testng.Assert.assertFalse;
-//import static org.testng.Assert.assertNotNull;
-//import static org.testng.Assert.assertNull;
-//import static org.testng.Assert.assertTrue;
-//
-//import java.io.File;
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.HashMap;
-//import java.util.Map;
-//import java.util.UUID;
-//
-//import org.jaccept.structure.ExtendedTestCase;
-//import org.testng.SkipException;
-//import org.testng.annotations.AfterClass;
-//import org.testng.annotations.BeforeClass;
-//import org.testng.annotations.Test;
-//
-//import com.canto.cumulus.Asset;
-//import com.canto.cumulus.CumulusException;
-//import com.canto.cumulus.GUID;
-//import com.canto.cumulus.Item;
-//import com.canto.cumulus.exceptions.UnresolvableAssetReferenceException;
-//import com.canto.cumulus.fieldvalue.AssetReference;
-//import com.canto.cumulus.fieldvalue.StringEnumFieldValue;
-//
-//import dk.kb.cumulus.field.EmptyField;
-//import dk.kb.cumulus.field.Field;
-//import dk.kb.cumulus.field.StringField;
-//import dk.kb.ginnungagap.config.RequiredFields;
-//import dk.kb.ginnungagap.testutils.TestFileUtils;
-//
-//public class CumulusRecordTest extends ExtendedTestCase {
-//
-//    File testFile = new File("src/test/resources/test-resource.txt");
-//
-//    @BeforeClass
-//    public void setupClass() {
-//        TestFileUtils.setup();
-//    }
-//    
-//    @AfterClass
-//    public void tearDownClass() {
-//        TestFileUtils.tearDown();
-//    }
-//    
+package dk.kb.cumulus;
+
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.jaccept.structure.ExtendedTestCase;
+import org.testng.SkipException;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import org.yaml.snakeyaml.Yaml;
+
+import com.canto.cumulus.Asset;
+import com.canto.cumulus.CumulusException;
+import com.canto.cumulus.GUID;
+import com.canto.cumulus.Item;
+import com.canto.cumulus.exceptions.UnresolvableAssetReferenceException;
+import com.canto.cumulus.fieldvalue.AssetReference;
+import com.canto.cumulus.fieldvalue.StringEnumFieldValue;
+
+import dk.kb.cumulus.field.EmptyField;
+import dk.kb.cumulus.field.Field;
+import dk.kb.cumulus.field.StringField;
+
+public class CumulusRecordTest extends ExtendedTestCase {
+
+
+    String testServerUrl;
+    String testUserName;
+    String testUserPassword;
+    String testCatalog;
+    
+    @BeforeClass
+    public void setup() throws Exception {
+        File f = new File(System.getenv("HOME") + "/cumulus-password.yml");
+        if(!f.exists()) {
+            throw new SkipException("Coult not find a YAML at '" + f.getAbsolutePath() + "'");
+        }
+        Object o = new Yaml().load(new FileInputStream(f));
+        if (!(o instanceof LinkedHashMap)) {
+            throw new SkipException("Could not read YAML file: " + f.getAbsolutePath());
+        }
+        LinkedHashMap<String, Object> settings = (LinkedHashMap<String, Object>) o;
+        
+        testServerUrl = (String) settings.get("server_url");
+        testUserName = (String) settings.get("login");
+        testUserPassword = (String) settings.get("password");
+        testCatalog = (String) settings.get("catalog");;
+    }
+
+    
+    
 //    @Test
 //    public void testConstructor() {
 //        addDescription("Test the constructor.");
@@ -761,10 +776,4 @@
 //        verify(item, times(2)).hasValue(eq(fieldGuid));
 //        verifyNoMoreInteractions(item);
 //    }
-//    
-//    @Test
-//    public void testToString() {
-//        // TODO
-//        if(true) throw new SkipException("Implement this test");
-//    }
-//}
+}
