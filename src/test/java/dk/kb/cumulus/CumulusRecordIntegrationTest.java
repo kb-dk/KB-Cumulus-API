@@ -38,7 +38,7 @@ public class CumulusRecordIntegrationTest extends ExtendedTestCase {
         testCatalog = (String) settings.get("catalog");;
     }
 
-    @Test
+    @Test(enabled = false)
     public void testCreatingNewRelations() throws Exception {
         addDescription("");
 
@@ -51,7 +51,7 @@ public class CumulusRecordIntegrationTest extends ExtendedTestCase {
             CumulusRecord record2 = server.findCumulusRecordByName(testCatalog, name2);
             Assert.assertNotNull(record2);
 
-            record1.addMasterAsset(record2);
+//            record1.addMasterAsset(record2);
             record2.addSubAsset(record1);
         }
     }
