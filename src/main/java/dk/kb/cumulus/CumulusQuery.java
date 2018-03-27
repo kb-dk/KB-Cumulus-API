@@ -76,6 +76,14 @@ public class CumulusQuery {
     }
     
     /**
+     * Override the toString to be able to print the queries directly.
+     */
+    @Override
+    public String toString() {
+        return "[CumulusQuery: " + query + "]";
+    }
+
+    /**
      * The query for extracting all the records in a Cumulus catalog.
      * 
      * The records which have the registration state 'registration finished', and it must belong to the given catalog.

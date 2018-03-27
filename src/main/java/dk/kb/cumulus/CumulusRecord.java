@@ -394,7 +394,7 @@ public class CumulusRecord {
 
             item.save();
         } catch(Exception e) {
-            String errMsg = "Could not set preservation complete";
+            String errMsg = "Could not set the value '" + value + "' for field '" + fieldName + "'.";
             log.error(errMsg, e);
             throw new IllegalStateException(errMsg, e);
         }

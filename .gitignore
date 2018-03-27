@@ -8,3 +8,4 @@ test-output/
 tempDir/
 .idea/
 kb-cumulus-api.iml
+cumulus-password.yml

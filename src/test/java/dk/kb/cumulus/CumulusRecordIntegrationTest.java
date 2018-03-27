@@ -22,7 +22,7 @@ public class CumulusRecordIntegrationTest extends ExtendedTestCase {
 
     @BeforeClass
     public void setup() throws Exception {
-        File f = new File(System.getenv("HOME") + "/cumulus-password.yml");
+        File f = new File("cumulus-password.yml");
         if(!f.exists()) {
             throw new SkipException("Coult not find a YAML at '" + f.getAbsolutePath() + "'");
         }
@@ -38,7 +38,7 @@ public class CumulusRecordIntegrationTest extends ExtendedTestCase {
         testCatalog = (String) settings.get("catalog");;
     }
 
-    @Test(enabled = false)
+    @Test//(enabled = false)
     public void testCreatingNewRelations() throws Exception {
         addDescription("");
 

@@ -184,7 +184,7 @@ public class CumulusServer implements Closeable {
     protected CumulusRecord getSpecificRecord(CumulusQuery query, String catalogName) {
         CumulusRecordCollection items = getItems(catalogName, query);
         if(items == null || !items.iterator().hasNext()) {
-            log.warn("Could not find any records with query: '" + query + "'. Returning a null");            
+            log.info("Could not find any records with query: '" + query + "'.");            
             return null;
         }
 
