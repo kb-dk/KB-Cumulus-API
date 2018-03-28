@@ -481,6 +481,6 @@ public class CumulusRecord {
     
     @Override
     public String toString() {
-        return "[CumulusRecord : " + getClass().getCanonicalName() + " -> " + guid + "]";
+        return "[CumulusRecord : " + getClass().getCanonicalName() + " -> " + getUUID() + "]";
     }
 }
