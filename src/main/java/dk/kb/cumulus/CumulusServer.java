@@ -41,9 +41,9 @@ public class CumulusServer implements Closeable {
      */
     public CumulusServer(CumulusConfiguration configuration) {
         ArgumentCheck.checkNotNull(configuration, "CumulusConfiguration configuration");
+        this.configuration = configuration;
         Cumulus.CumulusStart();
 
-        this.configuration = configuration;
         try {
             this.server = Server.openConnection(configuration.getWriteAccess(), configuration.getServerUrl(), 
                     configuration.getUserName(), configuration.getUserPassword());

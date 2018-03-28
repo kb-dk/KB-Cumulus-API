@@ -1,48 +1,28 @@
 package dk.kb.cumulus;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-
 import org.jaccept.structure.ExtendedTestCase;
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.yaml.snakeyaml.Yaml;
+
+import dk.kb.cumulus.config.CumulusConfiguration;
 
 public class CumulusRecordIntegrationTest extends ExtendedTestCase {
 
-
-    String testServerUrl;
-    String testUserName;
-    String testUserPassword;
-    String testCatalog;
-
+    CumulusConfiguration conf;
+    
     @BeforeClass
     public void setup() throws Exception {
-        File f = new File("cumulus-password.yml");
-        if(!f.exists()) {
-            throw new SkipException("Coult not find a YAML at '" + f.getAbsolutePath() + "'");
-        }
-        Object o = new Yaml().load(new FileInputStream(f));
-        if (!(o instanceof LinkedHashMap)) {
-            throw new SkipException("Could not read YAML file: " + f.getAbsolutePath());
-        }
-        LinkedHashMap<String, Object> settings = (LinkedHashMap<String, Object>) o;
-
-        testServerUrl = (String) settings.get("server_url");
-        testUserName = (String) settings.get("login");
-        testUserPassword = (String) settings.get("password");
-        testCatalog = (String) settings.get("catalog");;
+        conf = TestUtils.getTestConfiguration();
     }
 
-    @Test//(enabled = false)
-    public void testCreatingNewRelations() throws Exception {
-        addDescription("");
+    @Test
+    public void testCreatingSubAsset() throws Exception {
+        addDescription("Test creating the relation through settings a sub asset");
 
-        try (CumulusServer server = new CumulusServer(testServerUrl, testUserName, testUserPassword, Arrays.asList(testCatalog), true)) {
+        String testCatalog = conf.getCatalogs().get(0);
+        
+        try (CumulusServer server = new CumulusServer(conf)) {
             String name1 = "501981.tif";
             CumulusRecord record1 = server.findCumulusRecordByName(testCatalog, name1);
             Assert.assertNotNull(record1);
@@ -51,8 +31,34 @@ public class CumulusRecordIntegrationTest extends ExtendedTestCase {
             CumulusRecord record2 = server.findCumulusRecordByName(testCatalog, name2);
             Assert.assertNotNull(record2);
 
-//            record1.addMasterAsset(record2);
             record2.addSubAsset(record1);
+            
+            Assert.assertTrue(record2.isMasterAsset());
+            Assert.assertFalse(record2.isSubAsset());
+            Assert.assertTrue(record1.isSubAsset());
+        }
+    }
+    
+    @Test
+    public void testCreatingMasterAsset() throws Exception {
+        addDescription("Test creating the relation through settings a master asset");
+
+        String testCatalog = conf.getCatalogs().get(0);
+        
+        try (CumulusServer server = new CumulusServer(conf)) {
+            String name1 = "501981.tif";
+            CumulusRecord record1 = server.findCumulusRecordByName(testCatalog, name1);
+            Assert.assertNotNull(record1);
+
+            String name2 = "501981x.tif";
+            CumulusRecord record2 = server.findCumulusRecordByName(testCatalog, name2);
+            Assert.assertNotNull(record2);
+
+            record1.addMasterAsset(record2);
+            
+            Assert.assertTrue(record2.isMasterAsset());
+            Assert.assertFalse(record2.isSubAsset());
+            Assert.assertTrue(record1.isSubAsset());
         }
     }
 }

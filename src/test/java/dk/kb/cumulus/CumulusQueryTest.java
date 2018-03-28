@@ -59,4 +59,12 @@ public class CumulusQueryTest extends ExtendedTestCase {
         
         Assert.assertTrue(cq.getQuery().contains(catalogName));        
     }
+    
+    @Test
+    public void testToString() {
+        String query = "foo is bar\nand random is " + UUID.randomUUID();
+        CumulusQuery q = new CumulusQuery(query, EnumSet.of(FindFlag.FIND_MISSING_FIELDS_ARE_ERROR), CombineMode.FIND_NEW);
+        
+        Assert.assertTrue(q.toString().contains(query));
+    }
 }

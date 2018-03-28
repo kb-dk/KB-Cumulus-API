@@ -432,6 +432,23 @@ public class CumulusRecord {
             throw new IllegalStateException(errMsg, e);
         }        
     }
+    
+    /**
+     * Sets the date value for the given boolean field.
+     * @param fieldName The name of the field.
+     * @param value The new boolean value for the field.
+     */
+    public void setBooleanValueInField(String fieldName, Boolean value) {
+        GUID fieldGuid = fe.getFieldGUID(fieldName);
+        try {
+            item.setBooleanValue(fieldGuid, value);
+            item.save();
+        } catch (Exception e) {
+            String errMsg = "Could not set the boolean value '" + value + "' for the field '" + fieldName + "'";
+            log.error(errMsg, e);
+            throw new IllegalStateException(errMsg, e);
+        }        
+    }
 
     /**
      * Checks whether the record has any sub-assets, and thus whether it is a master-asset.
@@ -459,8 +476,7 @@ public class CumulusRecord {
         GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_MASTER_ASSETS);
         AssetXRefFieldValue assetXRef = item.getAssetXRefValue(fieldGuid);
         assetXRef.addReference(GUID.UID_ASSET_RELATION_IS_ALTERNATE, 
-                record.getFieldIntValue(Constants.FieldNames.ID), 
-                record.getFieldValue(Constants.FieldNames.RECORD_NAME));
+                record.item.getID(), record.item.getDisplayString());
         item.setAssetXRefValue(fieldGuid, assetXRef);
         item.save();
     }
@@ -472,7 +488,6 @@ public class CumulusRecord {
     public void addSubAsset(CumulusRecord record) {
         GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_SUB_ASSETS);
         AssetXRefFieldValue assetXRef = item.getAssetXRefValue(fieldGuid);
-//        assetXRef.
         assetXRef.addReference(GUID.UID_ASSET_RELATION_IS_ALTERNATE, 
                 record.item.getID(), record.item.getDisplayString());
         item.setAssetXRefValue(fieldGuid, assetXRef);
