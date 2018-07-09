@@ -817,47 +817,24 @@ public interface Constants {
         String QA_STATUS_FAILED_RECORD_KNOWN_STATE = 
             "FAILED, NOT DAMAGED, PLEASE FIX QA ERROR";
 
-        /**
-         * The value for REGISTRATIONSTATE that means that the record is not
-         * ready for publication yet.
-         */
+        /** The value for REGISTRATIONSTATE that means that the record is not ready for publication yet. */
         String REGISTRATIONSTATE_NOT_READY_FOR_TRANSFER = "Under registrering";
-
-        /**
-         * The value for REGISTRATIONSTATE that means that the record is not
-         * ready for publication yet.
-         */
+        /** The value for REGISTRATIONSTATE that means that the record is not ready for publication yet.*/
         String REGISTRATIONSTATE_FINISHED = "Færdigregistreret";
 
-        /**
-         * The value for PRESERVATION_STATUS that indicates that the record is
-         * ready to be archived.
-         */
-        String PRESERVATIONSTATE_READY_FOR_ARCHIVAL = 
-            "Klar til langtidsbevaring";
-        
-        /**
-         * The value for PRESERVATION_STATUS that indicates that the record has
-         * been archived.
-         */
+        /** The value for PRESERVATION_STATUS that indicates that the record is ready to be archived. */
+        String PRESERVATIONSTATE_READY_FOR_ARCHIVAL = "Klar til langtidsbevaring";
+        /** The value for PRESERVATION_STATUS that indicates that the record has been archived. */
         String PRESERVATIONSTATE_ARCHIVAL_COMPLETED = "Langtidsbevaret";
-
-        /**
-         * The value for PRESERVATION_STATUS that indicates that the record 
-         * is not to archived.
-         */
+        /** The value for PRESERVATION_STATUS that indicates that the record is not to archived. */
         String PRESERVATIONSTATE_NO_ARCHIVAL = "Skal ikke langtidsbevares";
-
-        /**
-         * The value for PRESERVATION_STATUS that indicates that 
-         * the long-term preservation of this the record failed.
-         */
+        /** The value for PRESERVATION_STATUS that indicates that the long-term preservation of this the 
+         * record failed. */
         String PRESERVATIONSTATE_ARCHIVAL_FAILED = "Langtidsbevaring fejlet";
+        /** The value for PRESERVATION_STATUS that indicates that the  */
+        String PRESERVATIONSTATE_READY_FOR_UPDATE = "Send kun metadata til bevaring";
 
-        /**
-         * The value for COMPRESSION that indicates that the image asset
-         * (TIFF file) is not compressed.
-         */
+        /** The value for COMPRESSION that indicates that the image asset (TIFF file) is not compressed. */
         String UNCOMPRESSED = "Uncompressed";
         
         
