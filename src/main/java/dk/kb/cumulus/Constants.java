@@ -822,8 +822,12 @@ public interface Constants {
         /** The value for REGISTRATIONSTATE that means that the record is not ready for publication yet.*/
         String REGISTRATIONSTATE_FINISHED = "Færdigregistreret";
 
-        /** The value for PRESERVATION_STATUS that indicates that the record is ready to be archived. */
+        /** The value for PRESERVATION_STATUS that indicates that the record is ready to be reviews for archival. 
+         * Though at this point the record is likely missing the presevation metadata.
+         * This is the step before SEND_TO_ARCHIVE.*/
         String PRESERVATIONSTATE_READY_FOR_ARCHIVAL = "Klar til langtidsbevaring";
+        /** The value for PRESERVATION_STATUS that indicates that the record is ready to be packaged and archived. */
+        String PRESERVATIONSTATE_SEND_TO_ARCHIVE = "Send til langtidsbevaring";
         /** The value for PRESERVATION_STATUS that indicates that the record has been archived. */
         String PRESERVATIONSTATE_ARCHIVAL_COMPLETED = "Langtidsbevaret";
         /** The value for PRESERVATION_STATUS that indicates that the record is not to archived. */
