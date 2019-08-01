@@ -4,7 +4,7 @@
 
   <groupId>dk.kb</groupId>
   <artifactId>kb-cumulus-api</artifactId>
-  <version>0.1.3</version>
+  <version>0.1.4</version>
   <packaging>jar</packaging>
 
   <name>kb-cumulus-api</name>

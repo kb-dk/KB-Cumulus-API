@@ -473,12 +473,8 @@ public class CumulusRecord {
      * @param record The record to add as Master Asset.
      */
     public void addMasterAsset(CumulusRecord record) {
-        GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_MASTER_ASSETS);
-        AssetXRefFieldValue assetXRef = item.getAssetXRefValue(fieldGuid);
-        assetXRef.addReference(GUID.UID_ASSET_RELATION_IS_ALTERNATE, 
-                record.item.getID(), record.item.getDisplayString());
-        item.setAssetXRefValue(fieldGuid, assetXRef);
-        item.save();
+        createRelationToRecord(record, Constants.FieldNames.RELATED_MASTER_ASSETS,
+                GUID.UID_ASSET_RELATION_IS_ALTERNATE);
     }
     
     /**
@@ -486,14 +482,23 @@ public class CumulusRecord {
      * @param record The record to add as Sub Asset.
      */
     public void addSubAsset(CumulusRecord record) {
-        GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_SUB_ASSETS);
+        createRelationToRecord(record, Constants.FieldNames.RELATED_SUB_ASSETS, GUID.UID_ASSET_RELATION_IS_ALTERNATE);
+    }
+
+    /**
+     * Create a relation to another record.
+     * @param record The record to create a relationship to.
+     * @param fieldName The name of the field for the relation.
+     * @param relation The type of relation.
+     */
+    public void createRelationToRecord(CumulusRecord record, String fieldName, GUID relation) {
+        GUID fieldGuid = fe.getFieldGUID(fieldName);
         AssetXRefFieldValue assetXRef = item.getAssetXRefValue(fieldGuid);
-        assetXRef.addReference(GUID.UID_ASSET_RELATION_IS_ALTERNATE, 
-                record.item.getID(), record.item.getDisplayString());
+        assetXRef.addReference(relation, record.item.getID(), record.item.getDisplayString());
         item.setAssetXRefValue(fieldGuid, assetXRef);
         item.save();
     }
-    
+
     @Override
     public String toString() {
         return "[CumulusRecord : " + getClass().getCanonicalName() + " -> " + getUUID() + "]";
