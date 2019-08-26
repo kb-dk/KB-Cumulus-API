@@ -279,6 +279,12 @@ public class FieldExtractor {
             AssetsField res = new AssetsField(fd, getFieldTypeName(fd.getFieldType()));
             for(String name : names) {
                 CumulusRecord cr = server.findCumulusRecordByName(catalog, name);
+                if(cr == null) {
+                    log.warn("Could not find sub-asset: '" + name + "'.");
+                    res.addAsset(name, "N/A");
+
+                    continue;
+                }
                 // initialize the RelatedObjectIdentifierValue for the intellectual entity
                 // This is needed for the preservation. Perhaps move?
                 if(cr.getFieldValueOrNull(

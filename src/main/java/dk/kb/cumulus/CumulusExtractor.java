@@ -71,6 +71,9 @@ public class CumulusExtractor {
         try (CumulusServer server = new CumulusServer(serverUrl, username, userPassword, Arrays.asList(catalog),
             false)) {
             CumulusRecord record = server.findCumulusRecordByName(catalog, filename);
+            if(record == null) {
+                throw new IllegalStateException("Cannot find record '" + filename + "'");
+            }
             extractMetadata(record);
         } catch (IOException e) {
             System.err.println("Failure to the extract metadata: ");
