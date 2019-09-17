@@ -55,7 +55,7 @@
       <artifactId>cumulus</artifactId>
       <version>10</version>
       <scope>system</scope>
-      <systemPath>/usr/local/Cumulus_Java_SDK/CumulusJC.jar</systemPath>
+      <systemPath>${basedir}/Cumulus_Java_SDK/CumulusJC.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
