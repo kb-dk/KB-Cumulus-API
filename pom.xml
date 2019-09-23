@@ -137,6 +137,7 @@
           </archive>
         </configuration>
       </plugin>
+      <!-- Does not work with OpenJDK 11
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -155,7 +156,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>      
+      </plugin>      -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
