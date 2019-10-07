@@ -173,19 +173,10 @@
           </execution>
         </executions>
       </plugin>      -->
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>dk.kb.cumulus.CumulusExtractor</mainClass>
-            </manifest>
-          </archive>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-      </plugin>
+      <!-- We don't attempt to build a jar-with-dependecies as the KB-Cumulus-API always
+           require a local installation of the Cumulus-SDK.
+           *** This also allows us to share the generated JAR publicly ***
+      -->
     </plugins>
   </build>
   
