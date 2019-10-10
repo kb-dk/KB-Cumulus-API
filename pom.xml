@@ -35,8 +35,18 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <test.groups>fast</test.groups>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>allTests</id>
+      <properties>
+        <test.groups>fast,slow</test.groups>
+      </properties>
+    </profile>
+  </profiles>
+  
   <developers>
     <developer>
       <name>Jonas Lindberg Frellesen</name>
