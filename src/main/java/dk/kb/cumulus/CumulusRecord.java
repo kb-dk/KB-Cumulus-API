@@ -166,6 +166,17 @@ public class CumulusRecord {
         GUID fieldGuid = fe.getFieldGUID(fieldname);
         return item.getIntValue(fieldGuid);
     }
+
+    /**
+     * Extracts the asset reference of a given field.
+     * It will return a null, if the field does not have a value.
+     * @param fieldname The name of the field to extract.
+     * @return The asset reference value of the field.
+     */
+    public AssetReference getAssetReference(String fieldname) {
+        GUID fieldGuid = fe.getFieldGUID(fieldname);
+        return item.getAssetReferenceValue(fieldGuid);
+    }
     
     /**
      * Retrieves the IDs of the categories for this record.
