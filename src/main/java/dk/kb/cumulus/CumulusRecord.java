@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.canto.cumulus.ItemCollection;
 import com.canto.cumulus.Asset;
 import com.canto.cumulus.GUID;
 import com.canto.cumulus.RecordItem;
@@ -177,7 +178,28 @@ public class CumulusRecord {
         GUID fieldGuid = fe.getFieldGUID(fieldname);
         return item.getAssetReferenceValue(fieldGuid);
     }
-    
+
+    /**
+     * Extracts the guid for a given field.
+     * It will return null if not found
+     * @param fieldname The name of the field to extract guid from.
+     * @return The guid of the first found fieldname or
+     * null if not found
+     */
+    public GUID getGUID(String fieldname){
+        return fe.getFieldGUID(fieldname);
+    }
+
+    /**
+     * Extracts the table value of the given guid
+     * @param guid The guid to get contents from
+     * @return Table value (contents of the item collection)
+     * for the specified guid
+     */
+    public ItemCollection getTableValue(GUID guid){
+        return item.getTableValue(guid);
+    }
+
     /**
      * Retrieves the IDs of the categories for this record.
      * @return The collection of IDs for the categories for this record.
