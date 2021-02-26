@@ -19,6 +19,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.canto.cumulus.CumulusException;
+import com.canto.cumulus.exceptions.FieldNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -107,7 +109,14 @@ public class CumulusRecord {
     public String getFieldValue(String fieldname) {
         if(!fieldValues.containsKey(fieldname)) {
             GUID fieldGuid = fe.getFieldGUID(fieldname);
-            fieldValues.put(fieldname, item.getStringValue(fieldGuid));    
+            try {
+                fieldValues.put(fieldname, item.getStringValue(fieldGuid));
+            } catch (CumulusException e) {
+                log.error("Cumulus failed to extract the following field value:" +
+                                " \n Fieldname: {}\n fieldGuid: {}\n item: {}\n fieldValues: {}\n",
+                        fieldname, fieldGuid, item, fieldValues);
+                e.printStackTrace();
+            }
         }
         return fieldValues.get(fieldname);
     }
