@@ -112,10 +112,10 @@ public class CumulusRecord {
             try {
                 fieldValues.put(fieldname, item.getStringValue(fieldGuid));
             } catch (CumulusException e) {
-                log.error("Cumulus failed to extract the following field value:" +
+                log.warn("\nCumulus failed to extract the following field value:" +
                                 " \n Fieldname: {}\n fieldGuid: {}\n item: {}\n fieldValues: {}\n",
                         fieldname, fieldGuid, item, fieldValues);
-                e.printStackTrace();
+                throw e;
             }
         }
         return fieldValues.get(fieldname);
