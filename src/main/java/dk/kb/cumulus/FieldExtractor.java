@@ -267,11 +267,11 @@ public class FieldExtractor {
      * @return The field.
      */
     protected Field extractBinaryField(FieldDefinition fd, Item item) {
-        log.info("KB-API: Extracting the binary value for field: " + fd.getName()); //todo: log.debug
+        log.debug("KB-API: Extracting the binary value for field: " + fd.getName());
 
         if(fd.getName().equals("Related Sub Assets") || fd.getName().equals("Related Master Assets")) {
-            log.info("extractBinaryField, Stack traces: " +
-                    Arrays.toString(Thread.currentThread().getStackTrace()).replace(',', '\n')); //todo: log.debug
+            log.debug("extractBinaryField, Stack traces: " +
+                    Arrays.toString(Thread.currentThread().getStackTrace()).replace(',', '\n'));
             AssetXRefFieldValue subAssets = item.getAssetXRefValue(fd.getFieldUID());
 
             List<String> names = new ArrayList<String>();
@@ -292,17 +292,17 @@ public class FieldExtractor {
                 // initialize the RelatedObjectIdentifierValue for the intellectual entity
                 // This is needed for the preservation. Perhaps move?
                 String uuid =
-                        cr.getFieldValueOrNull(Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY); //Representation or Related??
+                        cr.getFieldValueOrNull(Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY);
                 if(uuid == null || uuid.isEmpty()) {
                     uuid = UUID.randomUUID().toString();
-                    log.info("KB-API, set UUID: " + uuid + "in: "
-                            + Constants.FieldNames.REPRESENTATION_INTELLECTUAL_ENTITY_UUID + "Record name: " + name);  //todo: log.debug
+                    log.debug("KB-API, set UUID: " + uuid + "in: "
+                            + Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY + "Record name: " + name);
 
-                    cr.setStringValueInField(Constants.FieldNames.REPRESENTATION_INTELLECTUAL_ENTITY_UUID, //Representation or Related ??
-                            uuid);                                                                       // Det må være Related som kommentaren siger
+                    cr.setStringValueInField(Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY,
+                            uuid);
                 }
-                log.info("KB-API, Add asset with name " + name + ", relatedObjectIdentifierValue uuid value: " + cr.getFieldValueOrNull(
-                        Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY)); //todo: log.debug
+                log.debug("KB-API, Add asset with name " + name + ", relatedObjectIdentifierValue uuid value: " + cr.getFieldValueOrNull(
+                        Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY));
 
                 res.addAsset(name, cr.getFieldValue(
                         Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY));
