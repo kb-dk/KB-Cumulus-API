@@ -295,8 +295,8 @@ public class FieldExtractor {
                         cr.getFieldValueOrNull(Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY);
                 if(uuid == null || uuid.isEmpty()) {
                     uuid = UUID.randomUUID().toString();
-                    log.debug("KB-API, set UUID: " + uuid + "in: "
-                            + Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY + "Record name: " + name);
+                    log.debug("KB-API, set UUID: " + uuid + " in: "
+                            + Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY + ". Record name: " + name);
 
                     cr.setStringValueInField(Constants.FieldNames.RELATED_OBJECT_IDENTIFIER_VALUE_INTELLECTUEL_ENTITY,
                             uuid);
