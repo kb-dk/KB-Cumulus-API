@@ -4,7 +4,7 @@
 
   <groupId>dk.kb</groupId>
   <artifactId>kb-cumulus-api</artifactId>
-  <version>0.1.11-SNAPSHOT</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
 
   <name>kb-cumulus-api</name>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>com.canto</groupId>
       <artifactId>cumulus</artifactId>
-      <version>10</version>
+      <version>11</version>
       <scope>system</scope>
       <systemPath>/usr/local/Cumulus_Java_SDK/CumulusJC.jar</systemPath>
     </dependency>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
+      <version>1.2.11</version>
     </dependency>
     <!-- TEST DEPENDENCIES -->
     <dependency>
@@ -133,7 +133,7 @@
         <configuration>
           <sourceEncoding>utf-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
-          <targetJdk>11</targetJdk>
+          <targetJdk>1.8</targetJdk>
         </configuration>
         <executions>
           <execution>
