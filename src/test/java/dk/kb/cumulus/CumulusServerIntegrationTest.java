@@ -18,7 +18,7 @@ import dk.kb.cumulus.config.CumulusConfiguration;
 public class CumulusServerIntegrationTest extends ExtendedTestCase {
 
     CumulusConfiguration conf;
-    String uuid = "df919440-717f-11e0-82d7-002185371280";
+    String uuid = "70786480-0e45-11e7-919b-00505688346e";
     String name = "501981.tif";
     
     @BeforeClass
