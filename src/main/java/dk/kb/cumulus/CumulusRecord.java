@@ -115,7 +115,12 @@ public class CumulusRecord {
                 log.warn("\nCumulus failed to extract the following field value:" +
                                 " \n Fieldname: {}\n fieldGuid: {}\n item: {}\n fieldValues: {}\n",
                         fieldname, fieldGuid, item, fieldValues);
-                throw e;
+                throw new IllegalStateException("<br/>Cumulus failed to extract the following field value:" +
+                        "<br/> Fieldname: " + fieldname +
+                        "<br/> fieldGuid: " + fieldGuid +
+                        "<br/> item: " + item +
+                        "<br/> fieldValues:" + fieldValues +
+                        "<br/>", e);
             }
         }
         return fieldValues.get(fieldname);

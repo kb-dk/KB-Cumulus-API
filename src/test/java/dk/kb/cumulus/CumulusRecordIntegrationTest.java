@@ -23,11 +23,11 @@ public class CumulusRecordIntegrationTest extends ExtendedTestCase {
         String testCatalog = conf.getCatalogs().get(0);
         
         try (CumulusServer server = new CumulusServer(conf)) {
-            String name1 = "501981.tif";
+            String name1 = "KS000313_05.tif";// "501981.tif";
             CumulusRecord record1 = server.findCumulusRecordByName(testCatalog, name1);
             Assert.assertNotNull(record1);
 
-            String name2 = "501981x.tif";
+            String name2 =  "KS000313.tif"; //"501981x.tif";
             CumulusRecord record2 = server.findCumulusRecordByName(testCatalog, name2);
             Assert.assertNotNull(record2);
 
@@ -46,11 +46,11 @@ public class CumulusRecordIntegrationTest extends ExtendedTestCase {
         String testCatalog = conf.getCatalogs().get(0);
         
         try (CumulusServer server = new CumulusServer(conf)) {
-            String name1 = "501981.tif";
+            String name1 = "KS000313_05.tif"; //"501981.tif";
             CumulusRecord record1 = server.findCumulusRecordByName(testCatalog, name1);
             Assert.assertNotNull(record1);
 
-            String name2 = "501981x.tif";
+            String name2 = "KS000313.tif"; //"501981x.tif";
             CumulusRecord record2 = server.findCumulusRecordByName(testCatalog, name2);
             Assert.assertNotNull(record2);
 
