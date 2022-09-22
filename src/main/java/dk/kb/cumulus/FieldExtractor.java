@@ -160,8 +160,18 @@ public class FieldExtractor {
             return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
                     item.getStringEnumValue(fd.getFieldUID()).getDisplayString());
         case FieldTypes.FieldTypeInteger:
-            return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
-                    String.valueOf(item.getIntValue(fd.getFieldUID())));
+            // Note that DATE_ONLY is not under FieldTypeDate but FieldTypeInteger
+            if ( fd.getValueInterpretation() == FieldTypes.VALUE_INTERPRETATION_DATE_ONLY){
+//                int day = item.getDateOnlyValue(fd.getFieldUID()).getDay();
+//                int month = item.getDateOnlyValue(fd.getFieldUID()).getMonth();
+//                int year = item.getDateOnlyValue(fd.getFieldUID()).getYear();
+
+                return new StringField(fd, getFieldTypeName(fd.getFieldType()),
+                        item.getDateOnlyValue(fd.getFieldUID()).getUniversalDisplayString());
+            } else {
+                return new StringField(fd, getFieldTypeName(fd.getFieldType()),
+                        String.valueOf(item.getIntValue(fd.getFieldUID())));
+            }
         case FieldTypes.FieldTypeLong:
             return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
                     String.valueOf(item.getLongValue(fd.getFieldUID())));

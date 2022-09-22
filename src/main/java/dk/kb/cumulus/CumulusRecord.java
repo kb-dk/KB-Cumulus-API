@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,7 +21,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import com.canto.cumulus.CumulusException;
-import com.canto.cumulus.exceptions.FieldNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -499,11 +499,29 @@ public class CumulusRecord {
 
     /**
      * Checks whether the record has any sub-assets, and thus whether it is a master-asset.
-     * @return Whether or not this record is a master-asset.
+     * @return Whether this record is a master-asset.
      */
-    public boolean isMasterAsset() {
-        GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_SUB_ASSETS);
-        return item.hasValue(fieldGuid);
+//    public boolean isMasterAsset() {
+//        GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_SUB_ASSETS);
+//        AssetXRefFieldValue assetXRef = item.getAssetXRefValue(fieldGuid);
+//        Set<Integer> references = assetXRef.getReferences(GUID.UID_ASSET_RELATION_IS_ALTERNATE);
+//        String refs = references.toString();
+//        log.debug("Values of Related SubAssets: {}", refs);
+//        return item.hasValue(fieldGuid);
+//    }
+    public boolean isMasterAsset ()
+    {
+        final AssetXRefFieldValue assetXRefValue = item.getAssetXRefValue (GUID.UID_REC_RELATED_SUB_ASSETS);
+        if (assetXRefValue.hasValue ())
+        {
+            final Set<GUID> relations = assetXRefValue.getRelations ();
+            if (relations.contains (GUID.UID_ASSET_RELATION_IS_ALTERNATE))
+            {
+                final Set<Integer> relatedRecordIDs = assetXRefValue.getReferences (GUID.UID_ASSET_RELATION_IS_ALTERNATE);
+                return !relatedRecordIDs.isEmpty ();
+            }
+        }
+        return false;
     }
     
     /**
