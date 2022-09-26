@@ -503,27 +503,20 @@ public class CumulusRecord {
      */
 //    public boolean isMasterAsset() {
 //        GUID fieldGuid = fe.getFieldGUID(Constants.FieldNames.RELATED_SUB_ASSETS);
-//        AssetXRefFieldValue assetXRef = item.getAssetXRefValue(fieldGuid);
-//        Set<Integer> references = assetXRef.getReferences(GUID.UID_ASSET_RELATION_IS_ALTERNATE);
-//        String refs = references.toString();
-//        log.debug("Values of Related SubAssets: {}", refs);
 //        return item.hasValue(fieldGuid);
 //    }
-    public boolean isMasterAsset ()
-    {
+    public boolean isMasterAsset() {
         final AssetXRefFieldValue assetXRefValue = item.getAssetXRefValue (GUID.UID_REC_RELATED_SUB_ASSETS);
-        if (assetXRefValue.hasValue ())
-        {
-            final Set<GUID> relations = assetXRefValue.getRelations ();
-            if (relations.contains (GUID.UID_ASSET_RELATION_IS_ALTERNATE))
-            {
-                final Set<Integer> relatedRecordIDs = assetXRefValue.getReferences (GUID.UID_ASSET_RELATION_IS_ALTERNATE);
-                return !relatedRecordIDs.isEmpty ();
+        if (assetXRefValue.hasValue()) {
+            final Set<GUID> relations = assetXRefValue.getRelations();
+            if (relations.contains(GUID.UID_ASSET_RELATION_IS_ALTERNATE)) {
+                final Set<Integer> relatedRecordIDs = assetXRefValue.getReferences(GUID.UID_ASSET_RELATION_IS_ALTERNATE);
+                return !relatedRecordIDs.isEmpty();
             }
         }
         return false;
     }
-    
+
     /**
      * Checks whether the record has any master-assets attached, and thus whether it is a sub-asset.
      * @return Whether or not this record is a sub-asset.

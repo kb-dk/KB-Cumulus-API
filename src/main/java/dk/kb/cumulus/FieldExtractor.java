@@ -147,25 +147,30 @@ public class FieldExtractor {
 
         switch(fd.getFieldType()) {
         case FieldTypes.FieldTypeBool:
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
             return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
                     String.valueOf(item.getBooleanValue(fd.getFieldUID())));
         case FieldTypes.FieldTypeDate:
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
             // TOOD: figure out about how to format the date.
             return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
                     item.getDateValue(fd.getFieldUID()).toString());
         case FieldTypes.FieldTypeDouble:
-            return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
+            return new StringField(fd, getFieldTypeName(fd.getFieldType()),
                     String.valueOf(item.getDoubleValue(fd.getFieldUID())));
         case FieldTypes.FieldTypeEnum:
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
             return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
                     item.getStringEnumValue(fd.getFieldUID()).getDisplayString());
         case FieldTypes.FieldTypeInteger:
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
             // Note that DATE_ONLY is not under FieldTypeDate but FieldTypeInteger
             if ( fd.getValueInterpretation() == FieldTypes.VALUE_INTERPRETATION_DATE_ONLY){
+                log.debug("^VALUE_INTERPRETATION_DATE_ONLY");
 //                int day = item.getDateOnlyValue(fd.getFieldUID()).getDay();
 //                int month = item.getDateOnlyValue(fd.getFieldUID()).getMonth();
 //                int year = item.getDateOnlyValue(fd.getFieldUID()).getYear();
-
                 return new StringField(fd, getFieldTypeName(fd.getFieldType()),
                         item.getDateOnlyValue(fd.getFieldUID()).getUniversalDisplayString());
             } else {
@@ -173,19 +178,23 @@ public class FieldExtractor {
                         String.valueOf(item.getIntValue(fd.getFieldUID())));
             }
         case FieldTypes.FieldTypeLong:
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
             return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
                     String.valueOf(item.getLongValue(fd.getFieldUID())));
         case FieldTypes.FieldTypeString:
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
             return new StringField(fd, getFieldTypeName(fd.getFieldType()), 
                     item.getStringValue(fd.getFieldUID()));
         case FieldTypes.FieldTypeBinary:
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
             log.trace("Issue handling the field '" + fd.getName() + "' of type " + getFieldTypeName(fd.getFieldType())
                     + ", tries to extracts it as the path of the Asset Reference");
             return extractBinaryField(fd, item);
         case FieldTypes.FieldTypeTable:
+            log.debug("Reading field '{}' with type '{}'", fd.getName(), getFieldTypeName(fd.getFieldType()));
             return new TableField(fd, getFieldTypeName(fd.getFieldType()), item.getTableValue(fd.getFieldUID()), this);
         default:
-            log.trace("Currently does not handle field value for type " + getFieldTypeName(fd.getFieldType())
+            log.debug("Currently does not handle field value for type " + getFieldTypeName(fd.getFieldType())
                     + ", returning an empty field for " + fd.getName());
             return new EmptyField(fd, getFieldTypeName(fd.getFieldType()));
         }
@@ -277,10 +286,10 @@ public class FieldExtractor {
      * @return The field.
      */
     protected Field extractBinaryField(FieldDefinition fd, Item item) {
-        log.debug("KB-API: Extracting the binary value for field: " + fd.getName());
+        log.trace("KB-API: Extracting the binary value for field: " + fd.getName());
 
         if(fd.getName().equals("Related Sub Assets") || fd.getName().equals("Related Master Assets")) {
-            log.debug("extractBinaryField, Stack traces: " +
+            log.trace("extractBinaryField, Stack traces: " +
                     Arrays.toString(Thread.currentThread().getStackTrace()).replace(',', '\n'));
             AssetXRefFieldValue subAssets = item.getAssetXRefValue(fd.getFieldUID());
 
